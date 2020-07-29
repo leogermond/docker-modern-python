@@ -43,16 +43,8 @@ RUN for version in \
 # Remove temp APT packages
 RUN apt-mark auto '.*' > /dev/null \
  && apt-mark manual $savedAptMark \
- && find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec ldd '{}' ';' \
-    | awk '/=>/ { print $(NF-1) }' \
-    | sort -u \
-    | xargs -r dpkg-query --search \
-    | cut -d: -f1 \
-    | sort -u \
-    | xargs -r apt-mark manual; \
-    apt-get remove -y git gcc make wget \
- && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
-    rm -rf /var/lib/apt/lists/*
+ && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+ && rm -rf /var/lib/apt/lists/*
 
 RUN pip install tox flake8 tox-pyenv
 
