@@ -54,6 +54,15 @@ RUN apt-mark auto '.*' > /dev/null \
  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
  && rm -rf /var/lib/apt/lists/*
 
+# clear python build temp and test files
+RUN find / \
+          \( -name __pycache__ -a -type d \) \
+       -o \( -name "*.py[co]" -a -type f \) \
+       -exec rm rf {} \;
+ && find $PYENV_ROOT \
+          \( -name test -o -name tests -o -name idle_test \) -a -type d \
+       -exec rm rf {} \;
+
 RUN pip install --upgrade pip \
  && pip install tox flake8 tox-pyenv
 
