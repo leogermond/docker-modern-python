@@ -1,6 +1,6 @@
 FROM python:3-slim-buster
 
-# Mark and installemp APT packages
+# Mark and install temp APT packages
 RUN savedAptMark="$(apt-mark showmanual)" \
  && apt-get update
 RUN apt-get install -y --no-install-recommends \
