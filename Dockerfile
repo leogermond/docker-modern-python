@@ -51,4 +51,4 @@ RUN apt-mark auto '.*' > /dev/null \
  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip install tox flake8
+RUN pip install tox flake8 tox-pyenv
