@@ -35,7 +35,7 @@ RUN git clone https://github.com/pyenv/pyenv.git $PYENV_ROOT
 ENV PATH $PYENV_ROOT/bin:$PATH
 
 #       3.8.5 is default system version
-RUN  PYENV_VERSION_= " \
+RUN PYENV_VERSION_=" \
         system \
         3.7.8 \
         3.6.11 \
@@ -52,7 +52,7 @@ RUN  PYENV_VERSION_= " \
             --enable-optimizations \
            " \
           pyenv install -v $version; \
-      fi \
+      fi; \
     done \
 # PYENV_VERSION env variable is a bit overkill for most usages, simply set
 # them as global versions
