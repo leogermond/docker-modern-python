@@ -1,5 +1,8 @@
 FROM python:3-slim-buster
 
+# Necessary packages
+RUN apt-get install -y --no-install-recommends \
+      libexpat1-dev
 # Mark and install temp APT packages
 RUN savedAptMark="$(apt-mark showmanual)" \
  && apt-get update
@@ -10,7 +13,6 @@ RUN apt-get install -y --no-install-recommends \
       libbluetooth-dev \
       libbz2-dev \
       libc6-dev \
-      libexpat1-dev \
       libffi-dev \
       libgdbm-dev \
       liblzma-dev \
