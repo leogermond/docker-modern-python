@@ -52,3 +52,5 @@ RUN apt-mark auto '.*' > /dev/null \
     rm -rf /var/lib/apt/lists/*
 
 RUN pip install tox flake8 tox-pyenv
+
+CMD ["python"]
