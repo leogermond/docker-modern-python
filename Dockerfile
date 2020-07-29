@@ -1,12 +1,12 @@
 FROM python:3-slim-buster
 
-# Necessary packages
-RUN apt-get install -y --no-install-recommends \
+# Necessary APT packages
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
       libexpat1-dev
-# Mark and install temp APT packages
-RUN savedAptMark="$(apt-mark showmanual)" \
- && apt-get update
-RUN apt-get install -y --no-install-recommends \
+# Temp APT packages (save others to ~/apt-prev-manual)
+RUN apt-mark showmanual > ~/apt-prev-manual \
+ && apt-get install -y --no-install-recommends \
       git \
       dpkg-dev \
       gcc \
@@ -33,19 +33,28 @@ ENV PYENV_ROOT $HOME/.pyenv
 RUN git clone https://github.com/pyenv/pyenv.git $PYENV_ROOT
 ENV PATH $PYENV_ROOT/bin:$PATH
 
-RUN for version in \
-        3.6.11 \
+#       3.8.5 is default system version
+RUN PYENV_VERSION_=" \
+        system \
         3.7.8 \
-#       3.8.5 (default system version)
+        3.6.11 \
         3.9-dev \
-  ; do pyenv install -v $version; done
+    " \
+ && for version in $PYENV_VERSION_; do \
+      if [ "$version" != "system" ]; then pyenv install -v $version; fi \
+    done \
+# PYENV_VERSION env variable is a bit overkill for most usages, simply set
+# them as global versions
+ && pyenv global $PYENV_VERSION_
 
 # Remove temp APT packages
 RUN apt-mark auto '.*' > /dev/null \
- && apt-mark manual $savedAptMark \
+ && apt-mark manual $(cat ~/apt-prev-manual) \
+ && rm ~/apt-prev-manual \
  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
  && rm -rf /var/lib/apt/lists/*
 
-RUN pip install tox flake8 tox-pyenv
+RUN pip install --upgrade pip \
+ && pip install tox flake8 tox-pyenv
 
 CMD ["python"]
