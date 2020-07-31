@@ -1,4 +1,14 @@
 FROM python:3-slim-buster
+ARG TEST_IMAGE=0
+
+# keep tests files only on TEST_IMAGE != 0
+COPY tests tests
+RUN if [ $TEST_IMAGE -eq 0 ]; then \
+      rm -rf tests; \
+    else \
+      echo "Test image:" \
+      && ls -lAp tests; \
+    fi
 
 # Necessary APT packages
 RUN apt-get update \

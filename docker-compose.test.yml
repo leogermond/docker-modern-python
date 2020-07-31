@@ -1,3 +1,6 @@
 sut:
-    build: .
-    command: tox
+    build:
+      dockerfile: Dockerfile
+      args:
+        - TEST_IMAGE: 1
+    command: cd tests && tox
