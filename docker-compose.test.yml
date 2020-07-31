@@ -1,6 +1,9 @@
-sut:
-    build:
-      dockerfile: Dockerfile
-      args:
-        - TEST_IMAGE: 1
-    command: cd tests && tox
+version: "3.8"
+services:
+  sut:
+      build:
+        context: .
+        dockerfile: Dockerfile
+        args:
+          TEST_IMAGE: 1
+      command: cd tests && tox
