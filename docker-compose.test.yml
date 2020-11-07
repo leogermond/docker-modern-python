@@ -1,8 +1,0 @@
-version: "3.8"
-services:
-  sut:
-      build:
-        context: .
-        args:
-          TEST_IMAGE: 1
-      command: cd tests && tox
