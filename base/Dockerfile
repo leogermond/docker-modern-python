@@ -1,12 +1,7 @@
 FROM python:3-slim-buster
 ARG TEST_IMAGE=0
 ARG OPTIMIZE=0
-ARG PYENV_VERSION=" \
-        system \
-        3.6.11 \
-        3.7.8 \
-        3.9-dev \
-    "
+ARG PYENV_VERSION="3.9.0"
 
 # keep tests files only on TEST_IMAGE != 0
 COPY tests tests
@@ -51,27 +46,22 @@ RUN set -xe \
       # as of Stretch, "gpg" is no longer included by default
       $(command -v gpg > /dev/null || echo 'gnupg dirmngr') \
  && git clone https://github.com/pyenv/pyenv.git $PYENV_ROOT \
- && PYENV_VERSION_=$PYENV_VERSION \
- && for version in $PYENV_VERSION_; do \
-      if [ "$version" != "system" ]; then \
-          export PYTHON_CONFIGURE_OPTS=" \
-            --enable-option-checking=fatal \
-            --enable-shared \
-            --with-system-expat \
-            --with-system-ffi \
-            --without-ensurepip \
-          " \
-          && if [ $OPTIMIZE -ne 0 ]; then \
-             export PYTHON_CONFIGURE_OPTS="\
-                $PYTHON_CONFIGURE_OPTS \
-                --enable-optimizations"; \
-          fi \
-          && pyenv install -v $version; \
-      fi; \
-    done \
+ && export PYTHON_CONFIGURE_OPTS=" \
+       --enable-option-checking=fatal \
+       --enable-shared \
+       --with-system-expat \
+       --with-system-ffi \
+       --without-ensurepip \
+       " \
+ && if [ $OPTIMIZE -ne 0 ]; then \
+      export PYTHON_CONFIGURE_OPTS="\
+      $PYTHON_CONFIGURE_OPTS \
+      --enable-optimizations"; \
+    fi \
+ && pyenv install -v $PYENV_VERSION; \
  # PYENV_VERSION env variable is a bit overkill for most usages, simply set
  # them as global versions
- && pyenv global $PYENV_VERSION_ \
+ && pyenv global $PYENV_VERSION \
  # Strip executables
  && find / -executable -type f -exec strip --strip-all {} \; 2>/dev/null \
  # ...and l__pycache__ibs
@@ -90,8 +80,5 @@ RUN set -xe \
  && find $PYENV_ROOT \
        \( \( -name test -o -name tests -o -name idle_test \) -a -type d \) \
        -prune -exec rm -rf {} \;
-
-RUN pip install --upgrade pip \
- && pip install tox flake8 tox-pyenv
 
 CMD ["python"]
