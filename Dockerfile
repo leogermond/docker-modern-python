@@ -3,7 +3,9 @@ ARG TEST_IMAGE=0
 ARG OPTIMIZE=0
 ARG PYENV_VERSION=" \
         system \
+        3.6.11 \
         3.7.8 \
+        3.9-dev \
     "
 
 # keep tests files only on TEST_IMAGE != 0
