@@ -1,6 +1,6 @@
-FROM modern_python:3.6 as base-36
-FROM modern_python:3.7 as base-37
-FROM modern_python:3.9 as base-all
+FROM sawertyu/modern_python:3.6 as base-36
+FROM sawertyu/modern_python:3.7 as base-37
+FROM sawertyu/modern_python:3.9 as base-all
 
 COPY --from=base-36 $PYENV_ROOT/versions/ /tmp
 COPY --from=base-37 $PYENV_ROOT/versions/ /tmp
