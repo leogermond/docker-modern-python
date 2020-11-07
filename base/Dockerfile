@@ -54,11 +54,11 @@ RUN set -xe \
        --without-ensurepip \
        " \
  && if [ $OPTIMIZE -ne 0 ]; then \
-      export PYTHON_CONFIGURE_OPTS="\
+      export PYTHON_CONFIGURE_OPTS=" \
       $PYTHON_CONFIGURE_OPTS \
       --enable-optimizations"; \
     fi \
- && pyenv install -v $PYENV_VERSION; \
+ && pyenv install -v $PYENV_VERSION \
  # PYENV_VERSION env variable is a bit overkill for most usages, simply set
  # them as global versions
  && pyenv global $PYENV_VERSION \
