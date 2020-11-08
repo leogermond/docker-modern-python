@@ -81,7 +81,6 @@ RUN set -xe \
        \( \( -name test -o -name tests -o -name idle_test \) -a -type d \) \
        -prune -exec rm -rf {} \; \
  && rm -rf $PYENV_ROOT/.git \
- && rm -rf $PYENV_ROOT/*.log \
  # probably not possible to build any new python from there on...
  && rm -rf $PYENV_ROOT/plugins/python-build \
  # Remove install APT packages
@@ -96,6 +95,8 @@ RUN set -xe \
  	| xargs -r apt-mark manual \
  && rm ~/apt-prev-manual \
  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
- && rm -rf /var/lib/apt/lists/*
+ && rm -rf /var/lib/apt/lists/* \
+ && rm -rf /tmp/* \
+ && find -name "*.log" -delete
 
 CMD ["python"]
