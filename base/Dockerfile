@@ -68,11 +68,9 @@ RUN set -xe \
  # PYENV_VERSION env variable is a bit overkill for most usages, simply set
  # them as global versions
  && pyenv global $PYENV_VERSION \
- # Strip executables
- && find / -executable -type f -exec strip --strip-all {} \; 2>/dev/null \
- # ...and libs
- && find / \( -type f -a \( -name "*.a" -o -name "*.so" \) \
-         \) -exec strip --strip-all {} \; 2>/dev/null \
+ # Strip executables and libs
+ && find / -type f -a \( -executable -o -name "*.so" \) \
+          -exec strip --strip-all {} \; 2>/dev/null \
 # clear python build temp and test files
  && find / -name __pycache__ -type d -prune -exec rm -rf {} \; \
  && find / -name  "*.[oc]" -type f -exec rm -rf {} \; \
@@ -82,6 +80,9 @@ RUN set -xe \
  && find $PYENV_ROOT \
        \( \( -name test -o -name tests -o -name idle_test \) -a -type d \) \
        -prune -exec rm -rf {} \; \
+ && rm -rf $PYENV_ROOT/.git \
+ # probably not possible to build any new python from there on...
+ && rm -rf $PYENV_ROOT/plugins/python-build \
  # Remove install APT packages
  && apt-mark auto '.*' > /dev/null \
  && apt-mark manual $(cat ~/apt-prev-manual) \
@@ -94,6 +95,8 @@ RUN set -xe \
  	| xargs -r apt-mark manual \
  && rm ~/apt-prev-manual \
  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
- && rm -rf /var/lib/apt/lists/*
+ && rm -rf /var/lib/apt/lists/* \
+ && rm -rf /tmp/* \
+ && find -name "*.log" -delete
 
 CMD ["python"]
