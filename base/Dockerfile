@@ -19,7 +19,7 @@ RUN apt-get update \
 
 # pyenv install
 ENV PYENV_ROOT /.pyenv
-ENV PATH $PYENV_ROOT/bin:$PATH
+ENV PATH $PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH
 RUN set -xe \
  && apt-mark showmanual > ~/apt-prev-manual \
  # temp apt packages
@@ -53,6 +53,12 @@ RUN set -xe \
        --with-system-ffi \
        --without-ensurepip \
        " \
+ && export PYTHON_CFLAGS=" \
+      -Os \
+    " \
+ && export MAKE_OPT=" \
+      LDFLAGS=\"-Wl,--strip-all\" \
+    " \
  && if [ $OPTIMIZE -ne 0 ]; then \
       export PYTHON_CONFIGURE_OPTS=" \
       $PYTHON_CONFIGURE_OPTS \
@@ -64,21 +70,30 @@ RUN set -xe \
  && pyenv global $PYENV_VERSION \
  # Strip executables
  && find / -executable -type f -exec strip --strip-all {} \; 2>/dev/null \
- # ...and l__pycache__ibs
+ # ...and libs
  && find / \( -type f -a \( -name "*.a" -o -name "*.so" \) \
          \) -exec strip --strip-all {} \; 2>/dev/null \
+# clear python build temp and test files
+ && find / -name __pycache__ -type d -prune -exec rm -rf {} \; \
+ && find / -name  "*.[oc]" -type f -exec rm -rf {} \; \
+ && find / -type f -a \( -name "*.py[co]" -o -name "*.a" -o -name "*.exe" \) \
+           -exec rm -rf {} \; \
+ && ldconfig \
+ && find $PYENV_ROOT \
+       \( \( -name test -o -name tests -o -name idle_test \) -a -type d \) \
+       -prune -exec rm -rf {} \; \
  # Remove install APT packages
  && apt-mark auto '.*' > /dev/null \
  && apt-mark manual $(cat ~/apt-prev-manual) \
+ && find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec ldd '{}' ';' \
+ 	| awk '/=>/ { print $(NF-1) }' \
+ 	| sort -u \
+ 	| xargs -r dpkg-query --search \
+ 	| cut -d: -f1 \
+ 	| sort -u \
+ 	| xargs -r apt-mark manual \
  && rm ~/apt-prev-manual \
  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
- && rm -rf /var/lib/apt/lists/* \
-# clear python build temp and test files
- && find / -name __pycache__ -type d -prune -exec rm -rf {} \; \
- && find / -name "*.py[co]" -type f -exec rm -rf {} \; \
- && find / -name  "*.[oc]" -type f -exec rm -rf {} \; \
- && find $PYENV_ROOT \
-       \( \( -name test -o -name tests -o -name idle_test \) -a -type d \) \
-       -prune -exec rm -rf {} \;
+ && rm -rf /var/lib/apt/lists/*
 
 CMD ["python"]
