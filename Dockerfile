@@ -6,10 +6,7 @@ COPY --from=base-36 $PYENV_ROOT/versions/ /tmp
 COPY --from=base-37 $PYENV_ROOT/versions/ /tmp
 
 RUN set -xe \
- && cp -r tmp/* $PYENV_ROOT/versions \
- && rm -rf $PYENV_ROOT/.git \
- && rm -rf $PYENV_ROOT/plugins/python-build \
- && rm -rf $PYENV_ROOT/*.log
+ && cp -r tmp/* $PYENV_ROOT/versions
 
 FROM python:3-slim-buster
 
