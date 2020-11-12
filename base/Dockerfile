@@ -1,7 +1,7 @@
 FROM python:3-slim-buster
 ARG TEST_IMAGE=0
 ARG OPTIMIZE=0
-ARG PYENV_VERSION="3.9.0"
+ARG PYENV_VERSION="3.8.6"
 
 # keep tests files only on TEST_IMAGE != 0
 COPY tests tests
