@@ -18,6 +18,6 @@ ENV PATH $PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH
 COPY --from=base-all $PYENV_ROOT $PYENV_ROOT
 
 RUN pip install --upgrade pip \
- && pip install tox flake8 tox-pyenv pytest
+ && pip install --no-cache-dir tox flake8 tox-pyenv pytest
 
 CMD ["python"]
