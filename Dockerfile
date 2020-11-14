@@ -18,10 +18,11 @@ ENV PATH $PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH
 COPY --from=base-all $PYENV_ROOT $PYENV_ROOT
 
 RUN pip install --upgrade pip \
- && pip install --no-cache-dir tox flake8 tox-pyenv
+ && pip install --no-cache-dir tox flake8 tox-pyenv \
  && for pip in pip pip3.6 pip3.7 pip3.8 pip3.9; do \
       $pip install --upgrade pip \
       && $pip install --no-cache-dir pytest; \
-    done 
+    done \
+ && pyenv global 3.9.0 3.8.6 3.7.9 3.6.11
 
 CMD ["python"]
