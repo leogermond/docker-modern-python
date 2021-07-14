@@ -23,6 +23,6 @@ RUN pip install --upgrade pip \
       $pip install --upgrade pip \
       && $pip install --no-cache-dir pytest; \
     done \
- && pyenv global 3.9.0 3.8.6 3.7.9 3.6.11
+ && pyenv global 3.9.6 3.8.11 3.7.11 3.6.14
 
 CMD ["python"]
