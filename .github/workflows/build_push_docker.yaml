@@ -1,0 +1,24 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: sawertyu
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Build and push
+        id: docker_build
+        run: make && docker push -a sawertyu/modern_python
+      -
+        name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
