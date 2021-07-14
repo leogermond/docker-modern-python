@@ -16,9 +16,9 @@ jobs:
           username: sawertyu
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
-        name: Build and push
+        name: Build
         id: docker_build
-        run: make && docker push -a sawertyu/modern_python
+        run: make
       -
-        name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
+        name: Push
+        run: docker push -a sawertyu/modern_python
