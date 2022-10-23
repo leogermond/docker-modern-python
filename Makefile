@@ -1,4 +1,4 @@
-all: python_3.9.6 python_3.8.11 python_3.7.11 python_3.6.14
+all: python_3.10.8 python_3.9.15 python_3.8.15 python_3.7.15 python_3.6.15
 	docker build .
 
 version=$(word 2,$(subst _, ,$1))
